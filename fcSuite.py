@@ -86,14 +86,79 @@ class fcInteger:
     def get_value(self, Value):
         return (int(Value),)
 
+class fcHex:
+    def __init__(self):
+        pass
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            'required': {
+                'hex_code': ('STRING', {'default': ''}),
+            }
+        }
+
+    RETURN_TYPES = ("STRING",)
+    FUNCTION = "find_nearest_color"
+    CATEGORY = "fc"  # Assuming the category is similar to other classes
+
+    @staticmethod
+    def hex_to_rgb(hex_code):
+        hex_code = hex_code.lstrip('#')
+        return tuple(int(hex_code[i:i+2], 16) for i in (0, 2, 4))
+
+    @staticmethod
+    def color_distance(hex1, hex2):
+        rgb1 = fcHex.hex_to_rgb(hex1)
+        rgb2 = fcHex.hex_to_rgb(hex2)
+        return math.sqrt(sum((c1 - c2) ** 2 for c1, c2 in zip(rgb1, rgb2)))
+
+    def find_nearest_color(self, hex_code):
+        colors = {
+    "Brown": ["#654321", "#a52a2a"],
+    "Hazel": ["#81613C", "#6B4226"],
+    "Blue": ["#7BC8F6", "#0000FF"],
+    "Green": ["#90EE90", "#008000"],
+    "Gray": ["#C0C0C0", "#808080"],
+    "Amber": ["#FFBF00", "#B8860B"],
+    "Red": ["#FF0000", "#8B0000"],
+    "Orange": ["#FFA500", "#FF4500"],
+    "Yellow": ["#FFFF00", "#FFD700"],
+    "Purple": ["#800080", "#4B0082"],
+    "Pink": ["#FFC0CB", "#FF69B4"],
+    "White": ["#FFFFFF", "#F8F8FF"],
+    "Black": ["#000000", "#0A0A0A"],
+    "Cyan": ["#00FFFF", "#40E0D0"],
+    "Magenta": ["#FF00FF", "#FF1493"],
+    "Teal": ["#008080", "#20B2AA"],
+    "Gold": ["#FFD700", "#DAA520"]
+}
+
+
+        nearest_color = None
+        min_distance = float('inf')
+
+        for color, hex_range in eye_colors.items():
+            for hex_range_color in hex_range:
+                distance = self.color_distance(hex_code, hex_range_color)
+                if distance < min_distance:
+                    min_distance = distance
+                    nearest_color = color
+
+        return nearest_color
+
 NODE_CLASS_MAPPINGS = {
     "fcFloatMatic": fcFloatMatic,
     "fcFloat": fcFloat,
     "fcInteger": fcInteger,
+    "fcHex": fcHex,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "fcFloatMatic": "fcFloatMatic",
     "fcFloatNode": "fcFloat",
     "fcIntegerNode": "fcInteger",
+    "fcHex": "fcHex",
 }
+
+
